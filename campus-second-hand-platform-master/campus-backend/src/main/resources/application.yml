@@ -1,0 +1,156 @@
+# 基础服务配置（敏感项通过环境变量 / profile 覆盖）
+server:
+  port: ${SERVER_PORT:8081}
+  servlet:
+    context-path: /api/v1
+
+spring:
+  application:
+    name: campus-market
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  banner:
+    location: classpath:banner.txt
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    static-path-pattern: /static/**
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/campus_trading?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&autoReconnect=true&failOverReadOnly=false}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:798177}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:123456}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 100MB
+
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+
+jwt:
+  secret: ${JWT_SECRET:aB3kL9mN2pQ7rS4tU8vW1xY6zA5cD0eF3gH9jK2mP7qR4sT8uV1wX6yZ0aB}
+  expiration: ${JWT_EXPIRATION:86400000}
+  header: Authorization
+  prefix: Bearer
+
+file:
+  # 存储方式: local | oss
+  storage-type: ${FILE_STORAGE_TYPE:local}
+  upload:
+    max-size: 20971520
+    allowed-types: jpg,jpeg,png,gif,webp,mp4,avi,mov
+    path: uploads
+  oss:
+    endpoint: ${OSS_ENDPOINT:oss-cn-beijing.aliyuncs.com}
+    access-key-id: ${ALIBABA_AIR_TEST1_ACCESSKEY_ID:}
+    access-key-secret: ${ALIBABA_AIR_TEST1_ACCESSKEY_SECRET:}
+    bucket-name: ${OSS_BUCKET_NAME:java-oss-11}
+    # 对象前缀，例如 campus/
+    dir-prefix: ${OSS_DIR_PREFIX:campus/}
+    # 自定义域名（CDN），如 https://img.example.com ；留空则用 bucket.endpoint
+    url-prefix: ${OSS_URL_PREFIX:}
+    # 私有桶可开签名 URL
+    signed-url: ${OSS_SIGNED_URL:false}
+    signed-expire-seconds: ${OSS_SIGNED_EXPIRE_SECONDS:86400}
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.example.campussystem.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    com.example.campussystem: INFO
+    org.springframework.security: WARN
+    org.springframework.boot: INFO
+    org.springframework.web: WARN
+    com.zaxxer.hikari: WARN
+    org.apache.catalina: WARN
+    org.apache.tomcat: WARN
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    name: logs/campus-market.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+app:
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173,http://localhost:5174,http://localhost:3000}
+    allowed-methods: GET,POST,PUT,PATCH,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+  redis:
+    # 本地可设为 false；生产保持 true
+    enabled: ${REDIS_ENABLED:true}
+  security:
+    password:
+      min-length: 6
+      require-uppercase: false
+      require-lowercase: false
+      require-digit: false
+    rate-limit:
+      enabled: false
+      requests-per-minute: 100
+  swagger:
+    enabled: ${SWAGGER_ENABLED:false}
+
+deepseek:
+  api:
+    key: ${DEEPSEEK_API_KEY:}
+    base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+    model: ${DEEPSEEK_MODEL:deepseek-chat}
+    timeout: 60000
+    max-tokens: 2000
+    temperature: 0.7
+  assistant:
+    name: 校园交易小助手
+    system-prompt: |
+      你是一个专业的校园二手交易平台智能客服助手。你的职责是：
+      1. 回答用户关于平台使用的问题
+      2. 帮助用户解决交易过程中遇到的问题
+      3. 提供商品推荐和搜索建议
+      4. 解答关于订单、支付、物流等问题
+      5. 处理用户投诉和建议
+      
+      请用友好、专业的语气回答问题，保持简洁明了。如果遇到无法解决的问题，建议用户联系人工客服。

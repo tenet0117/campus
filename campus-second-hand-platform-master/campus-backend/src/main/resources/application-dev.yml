@@ -1,0 +1,40 @@
+# 本地开发默认值（勿在生产使用）
+spring:
+  datasource:
+    password: ${DB_PASSWORD:798177}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:123456}
+
+jwt:
+  secret: ${JWT_SECRET:campus-dev-only-jwt-secret-key-32chars-min}
+
+app:
+  swagger:
+    enabled: true
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:5174,http://localhost:3000
+  redis:
+    enabled: ${REDIS_ENABLED:true}
+
+# 开发默认走 OSS；AK/SK 从本机环境变量读取
+file:
+  storage-type: ${FILE_STORAGE_TYPE:local}
+  oss:
+    endpoint: ${OSS_ENDPOINT:oss-cn-beijing.aliyuncs.com}
+    access-key-id: ${ALIBABA_AIR_TEST1_ACCESSKEY_ID:}
+    access-key-secret: ${ALIBABA_AIR_TEST1_ACCESSKEY_SECRET:}
+    bucket-name: ${OSS_BUCKET_NAME:java-oss-11}
+    dir-prefix: ${OSS_DIR_PREFIX:campus/}
+    url-prefix: ${OSS_URL_PREFIX:}
+
+management:
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.example.campussystem: DEBUG

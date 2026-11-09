@@ -1,0 +1,34 @@
+# 生产环境：所有敏感项必须由环境变量注入，无明文默认值
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+app:
+  swagger:
+    enabled: false
+  cors:
+    allowed-origins: ${CORS_ORIGINS}
+
+deepseek:
+  api:
+    key: ${DEEPSEEK_API_KEY:}
+
+management:
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    com.example.campussystem: INFO
+    root: WARN
